@@ -5,7 +5,7 @@
   "main": "Index.ets",
   "author": {"name": 'huangyuan',"email": "huangyuan@huangyuanlove.com"},
   "license": "Apache-2.0",
-  "homepage": '',
-  "repository":'',
+  "homepage": 'https://juejin.cn/post/7427455855941156876',
+  "repository":'https://gitee.com/huangyuan/SimpleHtmlRender',
   "dependencies": {}
 }
