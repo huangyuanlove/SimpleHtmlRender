@@ -1,0 +1,11 @@
+{
+  "name": "simplehtmlrender",
+  "version": "1.0.0",
+  "description": "简易的富文本渲染控件，支持span、font、br、a标签，支持color、font-color、size、font-size、background、href属性",
+  "main": "Index.ets",
+  "author": {"name": 'huangyuan',"email": "huangyuan@huangyuanlove.com"},
+  "license": "Apache-2.0",
+  "homepage": '',
+  "repository":'',
+  "dependencies": {}
+}
