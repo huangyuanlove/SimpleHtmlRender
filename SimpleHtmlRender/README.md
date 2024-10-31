@@ -5,6 +5,10 @@
 支持的标签：span、font、br、a。
 支持的属性：color、font-color、size、font-size、background、href。
 
+### 效果图
+
+![效果图](example/rendering.png)
+
 ## 安装
 
 通过 ohpm
