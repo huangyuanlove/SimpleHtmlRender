@@ -15,7 +15,7 @@ export struct HtmlRender {
   @State hasParse: boolean = false
 
   aboutToAppear(): void {
-    this.supportTag.push(...['font','span','a','br'])
+    this.supportTag.push(...['font','span','a','br','img'])
       this.startParse()
   }
 
@@ -67,6 +67,8 @@ export struct HtmlRender {
       })
     } else if (name === 'color') {
       topStyle.fontColor = this.getColorWithStr(value)
+    } else if (name === 'src') {
+      topStyle.src = value
     }
     return true; // true:继续解析 false:停止解析
   }
@@ -152,7 +154,13 @@ export struct HtmlRender {
 
     }
     if (name === xml.EventType.END_TAG && (this.supportTag.includes(value.getName()))) {
-      this.styleStack.pop()
+      let style= this.styleStack.pop()
+      if(value.getName() === 'img'){
+        let vNode: VNode = new VNode()
+        vNode.style = style
+        this.rootNode.child?.push(vNode)
+      }
+
     }
 
     return true; //true:继续解析 false:停止解析
@@ -185,7 +193,10 @@ export struct HtmlRender {
               Span(child.text).configSpanStyle(child).onClick((_)=>{
                 this.onLinkClick?.(child.style.href??"")
               })
-            }else{
+            }else if(child.style.src){
+              ImageSpan(child.style.src).objectFit(ImageFit.Auto).height(child.style.fontSize)
+            }
+            else{
               Span(child.text).configSpanStyle(child)
             }
 
@@ -195,6 +206,8 @@ export struct HtmlRender {
             Span(child.text).configSpanStyle(child).onClick((_)=>{
               this.onLinkClick?.(child.style.href??"")
             })
+          }else if(child.style.src){
+            ImageSpan(child.style.src).objectFit(ImageFit.Auto).height(child.style.fontSize)
           }else{
             Span(child.text).configSpanStyle(child)
           }

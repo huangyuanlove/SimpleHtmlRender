@@ -14,6 +14,7 @@ export class Style{
   fontColor:string|Resource|Color = Color.Black
   hrefFontColor:string|Resource|Color = Color.Blue
   href:string | undefined
+  src:string | undefined
 
 }
 export function copyStyle(style?:Style):Style{
@@ -24,6 +25,7 @@ export function copyStyle(style?:Style):Style{
     tmp.fontColor = style.fontColor
     tmp.hrefFontColor = style.hrefFontColor
     tmp.href = style.href
+    tmp.src = style.src
   }
 
 

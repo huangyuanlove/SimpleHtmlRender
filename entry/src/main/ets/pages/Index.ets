@@ -7,7 +7,7 @@ import { hilog } from '@kit.PerformanceAnalysisKit'
 @Component
 struct Index {
   private htmlContent: string =
-    '<span style="color:blue;background:yellow" margin="left:10;right:10">这位姑娘有一双  <span style="color:blue;background:red" font-weight="10">蓝<span style="color:red;background:blue">色</span></span>的眼睛</span> <a href="https://example.com">这是链接</a>'
+    '<span style="color:blue;background:yellow" margin="left:10;right:10">这位姑<img src="https://alliance-communityfile-drcn.dbankcdn.com/FileServer/getFile/cmtyPub/011/111/111/0000000000011111111.20241101135748.69421330215182784913343800879033:50001231000000:2800:61A18C700942863FE77A8A307601C6E347B7A582DD8B5E0C401BFB7471D2843C.png?needInitFileName=true?needInitFileName=true" />娘有一双  <span style="color:blue;background:red" font-weight="10">蓝<span style="color:red;background:blue">色</span></span>的眼睛</span> <a href="https://example.com">这是链接</a>'
 
   build() {
     Column() {

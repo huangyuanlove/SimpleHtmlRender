@@ -1,9 +1,13 @@
 
+## 简介
+
 简单的富文本展示组件：
-支持的标签：span、font、br、a。
+支持的标签：span、font、br、a、img。
 支持的属性：color、font-color、size、font-size、background、href。
 
 ## 示例
+
+**注意**如果需要展示`img`标签，需要添加网络权限，可以参考这里[申请应用权限](https://developer.huawei.com/consumer/cn/doc/harmonyos-guides-V5/request-app-permissions-V5)
 
 ### 默认效果
 
@@ -80,9 +84,12 @@ function configSpanStyle(vNode: VNode) {
 1. `Span`不支持背景色，要么只能依赖父级控件`Text`或者父级控件`ContainerSpan`来设置背景色
 2. `ContainerSpan`只能包含`Span`、`ImageSpan`子组件。
 3. `Span`、`ImageSpan` 没有子控件
-4. `ImageSpan`只支持本地资源，因此暂时没有处理图片相关标签
+4. ~~`ImageSpan`只支持本地资源，因此暂时没有处理图片相关标签~~ 
+5. `ImageSpan`支持网络资源，但不支持`fitOriginalSize`属性，因此设置它的高度为字体大小，宽度按比例缩放;但`alt`属性只支持PixelMap，所以就暂时不支持了
 
-也就是说解析结果只有一个`Text`控件，内容样式都由`Span`和`ContainerSpan`完成
+
+
+也就是说解析结果只有一个`Text`控件，内容样式都由`Span`、`ImageSpan`和`ContainerSpan`完成
 
 ----
 
