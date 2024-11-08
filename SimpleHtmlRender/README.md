@@ -5,6 +5,10 @@
 支持的标签：span、font、br、a、img。
 支持的属性：color、font-color、size、font-size、background、href。
 
+
+已知问题：
+当属性值中有`&`符号时(比如a标签的href属性)，解析会报 `Error: unterminated entity ref`这个错误，但不影响解析
+
 ### 效果图
 
 ![效果图](example/rendering.png)

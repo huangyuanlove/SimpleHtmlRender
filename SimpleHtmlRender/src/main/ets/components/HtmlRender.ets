@@ -1,11 +1,12 @@
 import { copyStyle, Style, VNode } from "./VNode"
 import { HashMap, util, xml } from "@kit.ArkTS";
 import { Stack } from '@kit.ArkTS';
+import hilog from "@ohos.hilog";
 
 
 @Component
 export struct HtmlRender {
-  htmlContent: string = ''
+ @Watch('onHtmlContentChange')  @Require @Prop htmlContent: string = ''
   defaultStyle:Style|undefined
   onLinkClick:((link:string)=>void)|undefined
   rootNode: VNode = new VNode()
@@ -14,12 +15,27 @@ export struct HtmlRender {
   @BuilderParam builder: (vNode: VNode) => void | null
   @State hasParse: boolean = false
 
+
+  //改变该值触发更新
+  @State refresh:boolean = false
+
   aboutToAppear(): void {
     this.supportTag.push(...['font','span','a','br','img'])
       this.startParse()
   }
 
+  onHtmlContentChange(){
+   this.startParse()
+  }
+
+
   startParse() {
+
+   this.refresh = !this.refresh
+    this.hasParse = false
+    this.rootNode = new VNode()
+    this.styleStack = new Stack()
+
     let content:string =`<span>${this.htmlContent}</span>`
     let textEncoder: util.TextEncoder = new util.TextEncoder();
     let arrBuffer: Uint8Array = textEncoder.encodeInto(content);
@@ -31,8 +47,14 @@ export struct HtmlRender {
       attributeValueCallbackFunction: this.attributeValueCallback.bind(this),
       tokenValueCallbackFunction: this.tokenValueCallback.bind(this)
     };
-    xmlPullParser.parse(options);
-    this.hasParse = true
+    try {
+      xmlPullParser.parse(options);
+      this.hasParse = true
+    }catch (error){
+      hilog.error(0x01,'HtmlRender',`parse error==> ${(error as Object).toString()}`)
+      this.hasParse = true
+    }
+
 
   }
 
@@ -169,11 +191,20 @@ export struct HtmlRender {
 
   build() {
     if (this.hasParse) {
+      if(this.refresh){
+        if(this.builder){
+          this.builder(this.rootNode)
+        }else{
+          this.buildWithVNode(this.rootNode)
+        }
 
-      if(this.builder){
-        this.builder(this.rootNode)
       }else{
-        this.buildWithVNode(this.rootNode)
+        if(this.builder){
+          this.builder(this.rootNode)
+        }else{
+          this.buildWithVNode(this.rootNode)
+        }
+
       }
 
     } else {

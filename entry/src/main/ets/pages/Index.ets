@@ -1,18 +1,34 @@
 import { HtmlRender, Style, VNode } from 'simplehtmlrender'
 import { promptAction } from '@kit.ArkUI'
-import { HashMap } from '@kit.ArkTS'
-import { hilog } from '@kit.PerformanceAnalysisKit'
+
 
 @Entry
 @Component
 struct Index {
-  private htmlContent: string =
-    '<span style="color:blue;background:yellow" margin="left:10;right:10">这位姑<img src="https://alliance-communityfile-drcn.dbankcdn.com/FileServer/getFile/cmtyPub/011/111/111/0000000000011111111.20241101135748.69421330215182784913343800879033:50001231000000:2800:61A18C700942863FE77A8A307601C6E347B7A582DD8B5E0C401BFB7471D2843C.png?needInitFileName=true?needInitFileName=true" />娘有一双  <span style="color:blue;background:red" font-weight="10">蓝<span style="color:red;background:blue">色</span></span>的眼睛</span> <a href="https://example.com">这是链接</a>'
+
+
+
+  richText:string = '<span style="color:blue;background:yellow" margin="left:10;right:10">这位姑<img src="https://alliance-communityfile-drcn.dbankcdn.com/FileServer/getFile/cmtyPub/011/111/111/0000000000011111111.20241101135748.69421330215182784913343800879033:50001231000000:2800:61A18C700942863FE77A8A307601C6E347B7A582DD8B5E0C401BFB7471D2843C.png?needInitFileName=true?needInitFileName=true" />娘有一双  <span style="color:blue;background:red" font-weight="10">蓝<span style="color:red;background:blue">色</span></span>的眼睛</span> <a href="https://example.com?name=1&value=2">这是链接</a>'
+
+  @State htmlContent: string =this.richText
+
 
   build() {
     Column() {
+      Row(){
+        Button('改变内容').onClick((_)=>{
+            this.htmlContent += this.richText
+        })
+        Button('重置内容').onClick((_)=>{
+          this.htmlContent = this.richText
+        })
+      }
       Text('富文本内容').width('100%').textAlign(TextAlign.Start)
-      Text(this.htmlContent).padding(10).borderRadius(6).backgroundColor("#e7e7e7").margin(10)
+      Scroll(){
+        Text(this.htmlContent).padding(10).borderRadius(6).backgroundColor("#e7e7e7").margin(10)
+      }.height(200).scrollable(ScrollDirection.Vertical)
+
+
       Divider().vertical(false).color(Color.Gray).height(2).margin(15)
       Text('默认效果').width('100%').textAlign(TextAlign.Start)
       HtmlRender({htmlContent:this.htmlContent}).margin(10)
@@ -24,7 +40,7 @@ struct Index {
       Divider().vertical(false).color(Color.Gray).height(2).margin(15)
       Text('自定义展示效果').width('100%').textAlign(TextAlign.Start)
       HtmlRender({ htmlContent: this.htmlContent, builder: this.buildHtml }).margin(10)
-    }
+    }.justifyContent(FlexAlign.Start)
 
   }
 
