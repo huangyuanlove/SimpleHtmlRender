@@ -26,6 +26,22 @@ ohpm install simplehtmlrender
 
 **注意**如果需要展示`img`标签，需要添加网络权限，可以参考这里[申请应用权限](https://developer.huawei.com/consumer/cn/doc/harmonyos-guides-V5/request-app-permissions-V5)
 
+
+### 初始化
+支持全局初始化，设置默认效果
+```typescript
+
+import {initHtmlRender} from 'simplehtmlrender'
+initHtmlRender({
+  onLinkClick: (href:string)=>{promptAction.showToast({message:`点击了 ${href}`})},
+  backgroundColor:Color.Red,
+  fontColor:"#323232",
+  fontSize:14,
+  hrefFontColor:"#661b91e0"
+})
+```
+该优先级低于使用处指定渲染效果
+
 ### 默认效果
 
 ```typescript
@@ -39,6 +55,8 @@ HtmlRender({htmlContent:this.htmlContent})
         promptAction.showToast({message:`点击了链接 ${link}`})
       }})
 ```
+
+该优先级高于使用`initHtmlRender`指定的默认效果
 
 ### 自定义渲染
 

@@ -1,42 +1,43 @@
 import { copyStyle, Style, VNode } from "./VNode"
-import { HashMap, util, xml } from "@kit.ArkTS";
+import { util, xml } from "@kit.ArkTS";
 import { Stack } from '@kit.ArkTS';
 import hilog from "@ohos.hilog";
+import { InitParamsStore } from "./Init";
 
+const SUPPORT_TAG: string[] = ['font', 'span', 'a', 'br', 'img', 'p']
 
 @Component
 export struct HtmlRender {
- @Watch('onHtmlContentChange')  @Require @Prop htmlContent: string = ''
-  defaultStyle:Style|undefined
-  onLinkClick:((link:string)=>void)|undefined
+  @Watch('onHtmlContentChange') @Require @Prop htmlContent: string = ''
+  defaultStyle: Style | undefined
+  onLinkClick: ((link: string) => void) | undefined
   rootNode: VNode = new VNode()
-  supportTag:string[]=[]
   private styleStack: Stack<Style> = new Stack()
   @BuilderParam builder: (vNode: VNode) => void | null
   @State hasParse: boolean = false
-
-
   //改变该值触发更新
-  @State refresh:boolean = false
+  @State refresh: boolean = false
 
   aboutToAppear(): void {
-    this.supportTag.push(...['font','span','a','br','img'])
-      this.startParse()
+    //如果没有传入默认样式，则使用初始化方法中传入的样式
+    if (!this.defaultStyle) {
+      this.defaultStyle = InitParamsStore.defaultStyle
+    }
+    this.startParse()
   }
 
-  onHtmlContentChange(){
-   this.startParse()
+  onHtmlContentChange() {
+    this.startParse()
   }
-
 
   startParse() {
 
-   this.refresh = !this.refresh
+    this.refresh = !this.refresh
     this.hasParse = false
     this.rootNode = new VNode()
     this.styleStack = new Stack()
 
-    let content:string =`<span>${this.htmlContent}</span>`
+    let content: string = `<span>${this.htmlContent}</span>`
     let textEncoder: util.TextEncoder = new util.TextEncoder();
     let arrBuffer: Uint8Array = textEncoder.encodeInto(content);
 
@@ -50,8 +51,8 @@ export struct HtmlRender {
     try {
       xmlPullParser.parse(options);
       this.hasParse = true
-    }catch (error){
-      hilog.error(0x01,'HtmlRender',`parse error==> ${(error as Object).toString()}`)
+    } catch (error) {
+      hilog.error(0x01, 'HtmlRender', `parse error==> ${(error as Object).toString()}`)
       this.hasParse = true
     }
 
@@ -60,8 +61,8 @@ export struct HtmlRender {
 
   attributeValueCallback(name: string, value: string): boolean {
     let str = name + ' ' + value + ' ';
-    let topStyle:Style = this.styleStack.peek()
-    if(!topStyle){
+    let topStyle: Style = this.styleStack.peek()
+    if (!topStyle) {
       return true
     }
 
@@ -94,8 +95,6 @@ export struct HtmlRender {
     }
     return true; // true:继续解析 false:停止解析
   }
-
-
 
   getColorWithStr(color: string): string | Color {
     if (color.includes('#')) {
@@ -132,9 +131,9 @@ export struct HtmlRender {
     }
   }
 
-  getTagEventName(name: xml.EventType):string{
+  getTagEventName(name: xml.EventType): string {
     let nameStr = ''
-     if (name == xml.EventType.START_TAG) {
+    if (name == xml.EventType.START_TAG) {
       nameStr = 'START_TAG'
     } else if (name == xml.EventType.END_TAG) {
       nameStr = 'END_TAG'
@@ -143,10 +142,11 @@ export struct HtmlRender {
     }
     return nameStr
   }
+
   tokenValueCallback(name: xml.EventType, value: xml.ParseInfo): boolean {
     //只需要关心 START_TAG  END_TAG TEXT 这三个类型就好
-    if(name == xml.EventType.START_TAG || name == xml.EventType.END_TAG || name == xml.EventType.TEXT){
-    }else{
+    if (name == xml.EventType.START_TAG || name == xml.EventType.END_TAG || name == xml.EventType.TEXT) {
+    } else {
       return true
     }
 
@@ -159,12 +159,18 @@ export struct HtmlRender {
 
     if (name === xml.EventType.START_TAG) {
 
-      if (value.getName() === 'br') {
+      if (value.getName() === 'br' || value.getName() === 'p') {
         let lineBreakSpan = new VNode()
-        lineBreakSpan.text = '\n'
+        if (value.getName() === 'br') {
+          lineBreakSpan.text = '\n'
+        } else if (value.getName() === 'p') {
+          //暂且将 p 标签当作两个换行处理
+          lineBreakSpan.text = '\n\n'
+
+        }
         this.rootNode.child?.push(lineBreakSpan)
       }
-      if(this.supportTag.includes(value.getName())){
+      if (SUPPORT_TAG.includes(value.getName())) {
         if (this.styleStack.isEmpty()) {
           let stype = copyStyle(this.defaultStyle)
           this.styleStack.push(stype)
@@ -175,12 +181,19 @@ export struct HtmlRender {
       }
 
     }
-    if (name === xml.EventType.END_TAG && (this.supportTag.includes(value.getName()))) {
-      let style= this.styleStack.pop()
-      if(value.getName() === 'img'){
+    if (name === xml.EventType.END_TAG && (SUPPORT_TAG.includes(value.getName()))) {
+      let style = this.styleStack.pop()
+      if (value.getName() === 'img') {
         let vNode: VNode = new VNode()
         vNode.style = style
         this.rootNode.child?.push(vNode)
+      }else if(value.getName() === 'p'){
+
+          let lineBreakSpan = new VNode()
+            //暂且将 p 标签当作两个换行处理
+            lineBreakSpan.text = '\n\n'
+          this.rootNode.child?.push(lineBreakSpan)
+
       }
 
     }
@@ -188,20 +201,19 @@ export struct HtmlRender {
     return true; //true:继续解析 false:停止解析
   }
 
-
   build() {
     if (this.hasParse) {
-      if(this.refresh){
-        if(this.builder){
+      if (this.refresh) {
+        if (this.builder) {
           this.builder(this.rootNode)
-        }else{
+        } else {
           this.buildWithVNode(this.rootNode)
         }
 
-      }else{
-        if(this.builder){
+      } else {
+        if (this.builder) {
           this.builder(this.rootNode)
-        }else{
+        } else {
           this.buildWithVNode(this.rootNode)
         }
 
@@ -220,26 +232,47 @@ export struct HtmlRender {
       ForEach(vNode.child, (child: VNode) => {
         if (child.style.backgroundColor != Color.Transparent) {
           ContainerSpan() {
-            if(child.style.href && this.onLinkClick){
-              Span(child.text).configSpanStyle(child).backgroundColor(vNode.style.backgroundColor).onClick((_)=>{
-                this.onLinkClick?.(child.style.href??"")
+            if (child.style.href) {
+              Span(child.text).configSpanStyle(child).backgroundColor(vNode.style.backgroundColor).onClick((_) => {
+                if (child.style.href) {
+                  if (this.onLinkClick) {
+                    //优先调用传入的点击方法
+                    this.onLinkClick(child.style.href)
+                  } else if (InitParamsStore.onLinkClick) {
+                    //其次调用传入的点击方法
+                    InitParamsStore.onLinkClick(child.style.href)
+                  } else {
+                    //pass 没有任何处理
+                  }
+                }
+
+
               })
-            }else if(child.style.src){
+            } else if (child.style.src) {
               ImageSpan(child.style.src).objectFit(ImageFit.Auto).height(child.style.fontSize)
-            }
-            else{
+            } else {
               Span(child.text).configSpanStyle(child).backgroundColor(vNode.style.backgroundColor)
             }
 
           }.textBackgroundStyle({ color: child.style.backgroundColor })
         } else {
-          if(child.style.href && this.onLinkClick){
-            Span(child.text).configSpanStyle(child).backgroundColor(vNode.style.backgroundColor).onClick((_)=>{
-              this.onLinkClick?.(child.style.href??"")
+          if (child.style.href) {
+            Span(child.text).configSpanStyle(child).backgroundColor(vNode.style.backgroundColor).onClick((_) => {
+              if (child.style.href) {
+                if (this.onLinkClick) {
+                  //优先调用传入的点击方法
+                  this.onLinkClick(child.style.href)
+                } else if (InitParamsStore.onLinkClick) {
+                  //其次调用传入的点击方法
+                  InitParamsStore.onLinkClick(child.style.href)
+                } else {
+                  //pass 没有任何处理
+                }
+              }
             })
-          }else if(child.style.src){
+          } else if (child.style.src) {
             ImageSpan(child.style.src).objectFit(ImageFit.Auto).height(child.style.fontSize)
-          }else{
+          } else {
             Span(child.text).configSpanStyle(child).backgroundColor(vNode.style.backgroundColor)
           }
         }

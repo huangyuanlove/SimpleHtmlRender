@@ -1,16 +1,24 @@
-import { HtmlRender, Style, VNode } from 'simplehtmlrender'
+import { HtmlRender, Style, VNode ,initHtmlRender} from 'simplehtmlrender'
 import { promptAction } from '@kit.ArkUI'
+
 
 
 @Entry
 @Component
 struct Index {
 
-
-
-  richText:string = '<span style="color:blue;background:yellow" margin="left:10;right:10">这位姑<img src="https://alliance-communityfile-drcn.dbankcdn.com/FileServer/getFile/cmtyPub/011/111/111/0000000000011111111.20241101135748.69421330215182784913343800879033:50001231000000:2800:61A18C700942863FE77A8A307601C6E347B7A582DD8B5E0C401BFB7471D2843C.png?needInitFileName=true?needInitFileName=true" />娘有一双  <span style="color:blue;background:red" font-weight="10">蓝<span style="color:red;background:blue">色</span></span>的眼睛</span> <a href="https://example.com?name=1&value=2">这是链接</a>'
+  richText:string = '<span style="color:blue;background:yellow" margin="left:10;right:10">这位<br/>姑<img src="https://alliance-communityfile-drcn.dbankcdn.com/FileServer/getFile/cmtyPub/011/111/111/0000000000011111111.20241101135748.69421330215182784913343800879033:50001231000000:2800:61A18C700942863FE77A8A307601C6E347B7A582DD8B5E0C401BFB7471D2843C.png?needInitFileName=true?needInitFileName=true" />娘有<p>一双</p>  <span style="color:blue;background:red" font-weight="10">蓝<span style="color:red;background:blue">色</span></span>的眼睛</span> <a href="https://example.com?name=1&value=2">这是链接</a> 这里是普通文字'
 
   @State htmlContent: string =this.richText
+  aboutToAppear(): void {
+    initHtmlRender({
+      onLinkClick: (href:string)=>{promptAction.showToast({message:`点击了 ${href}`})},
+      backgroundColor:Color.Red,
+      fontColor:"#323232",
+      fontSize:14,
+      hrefFontColor:"#661b91e0"
+    })
+  }
 
 
   build() {
@@ -34,7 +42,7 @@ struct Index {
       HtmlRender({htmlContent:this.htmlContent}).margin(10)
       Divider().vertical(false).color(Color.Gray).height(2).margin(15)
       Text('自定义默认属性值').width('100%').textAlign(TextAlign.Start)
-      HtmlRender({htmlContent:this.htmlContent,defaultStyle:{fontSize:14,hrefFontColor:Color.Red,fontColor:Color.Brown} as Style, onLinkClick:(link:string)=>{
+      HtmlRender({htmlContent:this.htmlContent,defaultStyle:{fontSize:12,hrefFontColor:Color.Blue,fontColor:Color.Pink} as Style, onLinkClick:(link:string)=>{
         promptAction.showToast({message:`点击了链接 ${link}`})
       }}).margin(10)
       Divider().vertical(false).color(Color.Gray).height(2).margin(15)
