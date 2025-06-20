@@ -41,10 +41,7 @@ struct Index {
       Text('默认效果').width('100%').textAlign(TextAlign.Start)
       HtmlRender({htmlContent:this.htmlContent}).margin(10)
       Divider().vertical(false).color(Color.Gray).height(2).margin(15)
-      Text('自定义默认属性值').width('100%').textAlign(TextAlign.Start)
-      HtmlRender({htmlContent:this.htmlContent,defaultStyle:{fontSize:12,hrefFontColor:Color.Blue,fontColor:Color.Pink} as Style, onLinkClick:(link:string)=>{
-        promptAction.showToast({message:`点击了链接 ${link}`})
-      }}).margin(10)
+
       Divider().vertical(false).color(Color.Gray).height(2).margin(15)
       Text('自定义展示效果').width('100%').textAlign(TextAlign.Start)
       HtmlRender({ htmlContent: this.htmlContent, builder: this.buildHtml }).margin(10)

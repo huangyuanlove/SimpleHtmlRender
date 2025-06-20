@@ -6,17 +6,17 @@ import { InitParamsStore } from "./Init";
 
 const SUPPORT_TAG: string[] = ['font', 'span', 'a', 'br', 'img', 'p']
 
-@Component
+@ComponentV2
 export struct HtmlRender {
-  @Watch('onHtmlContentChange') @Require @Prop htmlContent: string = ''
+  @Require @Param htmlContent: string = ''
   defaultStyle: Style | undefined
   onLinkClick: ((link: string) => void) | undefined
   rootNode: VNode = new VNode()
   private styleStack: Stack<Style> = new Stack()
   @BuilderParam builder: (vNode: VNode) => void | null
-  @State hasParse: boolean = false
+  @Local hasParse: boolean = false
   //改变该值触发更新
-  @State refresh: boolean = false
+  @Local refresh: boolean = false
 
   aboutToAppear(): void {
     //如果没有传入默认样式，则使用初始化方法中传入的样式
@@ -26,7 +26,8 @@ export struct HtmlRender {
     this.startParse()
   }
 
-  onHtmlContentChange() {
+  @Monitor('htmlContent')
+  onHtmlContentChange(monitor: IMonitor) {
     this.startParse()
   }
 
@@ -45,11 +46,17 @@ export struct HtmlRender {
     let options: xml.ParseOptions = {
       supportDoctype: true,
       ignoreNameSpace: true,
-      attributeValueCallbackFunction: this.attributeValueCallback.bind(this),
-      tokenValueCallbackFunction: this.tokenValueCallback.bind(this)
+      // attributeValueCallbackFunction:this.attributeValueCallback.bind(this),
+      // tokenValueCallbackFunction: this.tokenValueCallback.bind(this)
+      attributeValueCallbackFunction:(name:string,value:string)=>{
+        return this.attributeValueCallback(name,value)
+      },
+      tokenValueCallbackFunction:(name: xml.EventType, value: xml.ParseInfo)=>{
+        return this.tokenValueCallback(name,value)
+      }
     };
     try {
-      xmlPullParser.parse(options);
+      xmlPullParser.parseXml(options);
       this.hasParse = true
     } catch (error) {
       hilog.error(0x01, 'HtmlRender', `parse error==> ${(error as Object).toString()}`)
@@ -60,7 +67,6 @@ export struct HtmlRender {
   }
 
   attributeValueCallback(name: string, value: string): boolean {
-    let str = name + ' ' + value + ' ';
     let topStyle: Style = this.styleStack.peek()
     if (!topStyle) {
       return true
@@ -187,12 +193,12 @@ export struct HtmlRender {
         let vNode: VNode = new VNode()
         vNode.style = style
         this.rootNode.child?.push(vNode)
-      }else if(value.getName() === 'p'){
+      } else if (value.getName() === 'p') {
 
-          let lineBreakSpan = new VNode()
-            //暂且将 p 标签当作两个换行处理
-            lineBreakSpan.text = '\n\n'
-          this.rootNode.child?.push(lineBreakSpan)
+        let lineBreakSpan = new VNode()
+        //暂且将 p 标签当作两个换行处理
+        lineBreakSpan.text = '\n\n'
+        this.rootNode.child?.push(lineBreakSpan)
 
       }
 

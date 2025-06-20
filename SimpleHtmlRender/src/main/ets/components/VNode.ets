@@ -1,4 +1,3 @@
-import { HashMap } from "@kit.ArkTS"
 
 export class VNode{
   text:string=''

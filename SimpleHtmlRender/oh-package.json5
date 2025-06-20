@@ -1,6 +1,6 @@
 {
   "name": "simplehtmlrender",
-  "version": "1.0.5",
+  "version": "2.0.0",
   "description": "简易的富文本渲染控件，支持span、font、br、a标签，支持color、font-color、size、font-size、background、href属性",
   "main": "Index.ets",
   "keywords": ["富文本","html展示","富文本展示"],

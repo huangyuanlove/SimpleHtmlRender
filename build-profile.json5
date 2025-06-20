@@ -5,13 +5,13 @@
         "name": "default",
         "type": "HarmonyOS",
         "material": {
-          "certpath": "C:\\Users\\huangyuan\\.ohos\\config\\default_SimpleHtmlRenderDemo_iba5vEp7Q_8CM12FxBGtrq0BNzd4LlfNA2OifGsds14=.cer",
-          "storePassword": "0000001A12CBB7D81EC736D63E2DA572A6E1CC0C6D3A73C06A16AD818387CE45611C1903456543A81462",
+          "certpath": "/Users/huangyuan/.ohos/config/default_SimpleHtmlRenderProject_F5qXvaBr6DXt2tVAQBhomdEf-_ZpIM1hw2TQ7Kcu6ak=.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001A3B2636F20586C9913F75DAE3203ADCC9BFDCA297098BF042C89397D81A6429CCE257AD463669",
-          "profile": "C:\\Users\\huangyuan\\.ohos\\config\\default_SimpleHtmlRenderDemo_iba5vEp7Q_8CM12FxBGtrq0BNzd4LlfNA2OifGsds14=.p7b",
+          "keyPassword": "0000001ACDF2917E070465B7FDFF72F33C833393AD391AC651F3533DA48985DA06894219FF078FA4264A",
+          "profile": "/Users/huangyuan/.ohos/config/default_SimpleHtmlRenderProject_F5qXvaBr6DXt2tVAQBhomdEf-_ZpIM1hw2TQ7Kcu6ak=.p7b",
           "signAlg": "SHA256withECDSA",
-          "storeFile": "C:\\Users\\huangyuan\\.ohos\\config\\default_SimpleHtmlRenderDemo_iba5vEp7Q_8CM12FxBGtrq0BNzd4LlfNA2OifGsds14=.p12"
+          "storeFile": "/Users/huangyuan/.ohos/config/default_SimpleHtmlRenderProject_F5qXvaBr6DXt2tVAQBhomdEf-_ZpIM1hw2TQ7Kcu6ak=.p12",
+          "storePassword": "0000001A082F231F71279F7169E0C6865D9047795BBF1312E6041B28772C83A9BE099EDF6671D985D667"
         }
       }
     ],
